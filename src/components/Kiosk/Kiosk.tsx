@@ -14,7 +14,7 @@ export const Kiosk = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="container pt-8 sm:pt-12 lg:pt-16">
-        <div className="relative flex items-center">
+        <div className="relative flex items-center justify-center">
           <div className="text-blue-600">
             <svg className="w-44" viewBox="0 0 190 50">
               <g>
@@ -30,9 +30,6 @@ export const Kiosk = () => {
                 />
               </g>
             </svg>
-          </div>
-          <div className="flex ml-auto" onClick={() => true}>
-            hello
           </div>
         </div>
       </div>

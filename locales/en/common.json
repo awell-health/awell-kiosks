@@ -8,5 +8,9 @@
   "next_cta": "Next",
   "confirm_cta": "Confirm",
   "hi": "Hi",
-  "identification_heading": "Identification"
+  "identification_heading": "Identification",
+  "first_name": "First name",
+  "last_name": "Last name",
+  "email": "Email",
+  "national_registry_number": "National registry number"
 }

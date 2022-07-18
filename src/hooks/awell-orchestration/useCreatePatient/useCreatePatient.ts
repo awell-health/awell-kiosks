@@ -7,17 +7,17 @@ import {
 import { CREATE_PATIENT } from './graphql/CreatePatient.graphql'
 
 interface UseCreatePatientHook {
-  createPatient: (profile: CreatePatientInput) => Promise<User>
+  createPatient: (profileData: CreatePatientInput) => Promise<User>
 }
 
 export const useCreatePatient = (): UseCreatePatientHook => {
   const [createPatientMutation] = useMutation(CREATE_PATIENT)
 
-  const createPatient = async (profile: unknown) => {
+  const createPatient = async (profileData: unknown) => {
     try {
       const { data } = await createPatientMutation({
         variables: {
-          input: profile,
+          input: profileData,
         },
       })
       return data.createPatient.patient
