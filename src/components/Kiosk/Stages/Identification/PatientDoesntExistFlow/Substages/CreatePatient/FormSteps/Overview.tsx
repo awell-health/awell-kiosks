@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next'
 
-import { useCreatePatient } from '../../../../../../../../contexts/CreatePatientContext'
+import { useCreatePatientContext } from '../../../../../../../../contexts/CreatePatientContext'
 import { KioskButton } from '../../../../../../../Button/variants'
 
 interface OverviewProps {
@@ -9,7 +9,7 @@ interface OverviewProps {
 }
 
 export const Overview = ({ onPatientCreation, onEdit }: OverviewProps) => {
-  const { data } = useCreatePatient()
+  const { data } = useCreatePatientContext()
   const { t } = useTranslation()
 
   return (

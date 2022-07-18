@@ -1,6 +1,6 @@
 import { type FieldValues, useForm } from 'react-hook-form'
 
-import { useCreatePatient } from '../../../../../../../../contexts/CreatePatientContext'
+import { useCreatePatientContext } from '../../../../../../../../contexts/CreatePatientContext'
 import { KioskButton } from '../../../../../../../Button/variants'
 
 interface FirstNameProps {
@@ -11,7 +11,7 @@ interface FirstNameProps {
 const fieldProperty = 'first_name'
 
 export const FirstName = ({ nextFormStep, editMode }: FirstNameProps) => {
-  const { data, setPatientData } = useCreatePatient()
+  const { data, setPatientData } = useCreatePatientContext()
 
   const {
     handleSubmit,

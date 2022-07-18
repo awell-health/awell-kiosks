@@ -1,5 +1,5 @@
 export {
   CreatePatientContext,
   CreatePatientProvider,
-  useCreatePatient,
+  useCreatePatientContext,
 } from './CreatePatientContext'

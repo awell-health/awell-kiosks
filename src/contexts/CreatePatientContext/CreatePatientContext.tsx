@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext, useState } from 'react'
 
 interface CreatePatientContextStateType {
-  data: { [key in string]: unknown }
-  setPatientData: (newValues: { [key in string]: unknown }) => void
+  data: { [key in string]: string }
+  setPatientData: (newValues: { [key in string]: string }) => void
 }
 
 const initialState: CreatePatientContextStateType = {
@@ -22,7 +22,7 @@ export const CreatePatientProvider = ({
 }: CreatePatientProviderProps) => {
   const [data, setData] = useState(initialState.data)
 
-  const setPatientData = (values: { [key in string]: unknown }) => {
+  const setPatientData = (values: { [key in string]: string }) => {
     setData(() => ({
       ...data,
       ...values,
@@ -36,4 +36,4 @@ export const CreatePatientProvider = ({
   )
 }
 
-export const useCreatePatient = () => useContext(CreatePatientContext)
+export const useCreatePatientContext = () => useContext(CreatePatientContext)

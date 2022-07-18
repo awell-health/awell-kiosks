@@ -1,6 +1,6 @@
 import { type FieldValues, useForm } from 'react-hook-form'
 
-import { useCreatePatient } from '../../../../../../../../contexts/CreatePatientContext'
+import { useCreatePatientContext } from '../../../../../../../../contexts/CreatePatientContext'
 import { KioskButton } from '../../../../../../../Button/variants'
 
 interface NationalRegistryNumberProps {
@@ -14,7 +14,7 @@ export const NationalRegistryNumber = ({
   nextFormStep,
   editMode,
 }: NationalRegistryNumberProps) => {
-  const { data, setPatientData } = useCreatePatient()
+  const { data, setPatientData } = useCreatePatientContext()
 
   const {
     handleSubmit,
