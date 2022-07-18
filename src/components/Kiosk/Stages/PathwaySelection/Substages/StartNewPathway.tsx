@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client'
 import { useTranslation } from 'next-i18next'
-import { ChangeEvent, useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { KioskContext } from '../../../../../contexts/KioskContext'
 import { GET_PATHWAY } from '../../../../../hooks/awell-orchestration/usePathway/graphql/getPathway.graphql'
@@ -15,14 +15,11 @@ export const StartNewPathway = () => {
   const { patient, setPathway, goToNextStage } = useContext(KioskContext)
   const [selectedPathwayToStart, setSelectedPathwayToStart] = useState('')
   const [isStartingPathway, setIsStartingPathway] = useState(false)
-  const { publishedPathwayDefinitions, loading } =
+  const { publishedPathwayDefinitions, loading: loadingPublishedPathways } =
     usePublishedPathwayDefinitions()
   const { startPathway } = useStartPathway()
-  const [getPathway, { loading: loadingSelectedPathway, error, data }] =
+  const [getPathway, { loading: loadingSelectedPathway }] =
     useLazyQuery(GET_PATHWAY)
-  const handlePathwaySelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedPathwayToStart(e.target.value)
-  }
 
   const onPathwayStart = async () => {
     setIsStartingPathway(true)
@@ -40,6 +37,18 @@ export const StartNewPathway = () => {
         goToNextStage()
       }
     }
+  }
+
+  if (isStartingPathway) {
+    return <p>Starting pathway...</p>
+  }
+
+  if (loadingSelectedPathway) {
+    return <p>Retrieving the recently started pathway...</p>
+  }
+
+  if (loadingPublishedPathways) {
+    return <p>Loading available pathways...</p>
   }
 
   return (

@@ -37,7 +37,7 @@ interface FormProps {
 const renderQuestion = (
   question: QuestionWithVisibility,
   register: UseFormRegister<FieldValues>,
-  control: Control<FieldValues>
+  control: Control<Record<string, unknown>, object>
 ) => {
   switch (question.userQuestionType) {
     case 'NUMBER':
@@ -54,7 +54,11 @@ const renderQuestion = (
           name={question.id}
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Boolean question={question} onChange={onChange} value={value} />
+            <Boolean
+              question={question}
+              onChange={onChange}
+              value={typeof value === 'boolean' ? value : false}
+            />
           )}
           defaultValue={false}
         />
@@ -165,6 +169,7 @@ const Form = ({
 
             return (
               <div key={question.id}>
+                {/* @ts-expect-error fix typing */}
                 {renderQuestion(question, register, control)}
               </div>
             )

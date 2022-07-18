@@ -10,7 +10,7 @@ import { PatientDoesntExistFlow } from './PatientDoesntExistFlow'
 export const Identification = () => {
   const { t } = useTranslation()
   const [inputValue, setInputValue] = useState('')
-  const [searchByNationalRegistryNumber, { loading, error, data, called }] =
+  const [searchByNationalRegistryNumber, { loading, data, called }] =
     useLazyQuery(SEARCH_BY_NATIONAL_REGISTRY_NUMBER)
 
   const searchPatient = () => {

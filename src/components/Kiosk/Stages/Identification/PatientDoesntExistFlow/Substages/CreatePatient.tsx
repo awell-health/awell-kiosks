@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+// import { useTranslation } from 'next-i18next'
 import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -8,7 +8,7 @@ import { useCreatePatient } from '../../../../../../hooks/awell-orchestration/us
 export const CreatePatient = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
   const { setPatient, goToNextStage } = useContext(KioskContext)
   const { createPatient } = useCreatePatient()
   const { register, handleSubmit } = useForm()
@@ -24,6 +24,10 @@ export const CreatePatient = () => {
       }
       setIsLoading(false)
     })()
+  }
+
+  if (isLoading) {
+    return <p>Creating patient...</p>
   }
 
   return (

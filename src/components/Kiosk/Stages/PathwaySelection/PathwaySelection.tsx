@@ -12,14 +12,14 @@ import { StartNewPathway } from './Substages'
 export const PathwaySelection = () => {
   const { t } = useTranslation()
   const { patient, setPathway, goToNextStage } = useContext(KioskContext)
-  const [startNewPathway, setStartNewPathway] = useState(false)
+  // const [startNewPathway, setStartNewPathway] = useState(false)
   const [selectedPathwayId, setSelectedPathwayId] = useState('')
 
   if (!patient) {
     throw new Error('There should be a patient')
   }
 
-  const [getPathway, { loading: loadingSelectedPathway, error, data }] =
+  const [getPathway, { loading: loadingSelectedPathway }] =
     useLazyQuery(GET_PATHWAY)
 
   const onSubmit = async () => {
@@ -45,9 +45,9 @@ export const PathwaySelection = () => {
     return <p>Loading pathway</p>
   }
 
-  if (startNewPathway) {
-    return <StartNewPathway />
-  }
+  // if (startNewPathway) {
+  //   return <StartNewPathway />
+  // }
 
   if (patientPathways.length === 0) {
     return <StartNewPathway />
