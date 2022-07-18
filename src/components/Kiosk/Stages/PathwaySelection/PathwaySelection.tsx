@@ -6,13 +6,14 @@ import { KioskContext } from '../../../../contexts/KioskContext'
 import { GET_PATHWAY } from '../../../../hooks/awell-orchestration/usePathway/graphql/getPathway.graphql'
 import { usePatientPathways } from '../../../../hooks/awell-orchestration/usePatientPathways'
 import { KioskButton } from '../../../Button/variants'
+import { Loading } from '../../../Loading'
 import { ExistingPatientPathways } from './atoms'
 import { StartNewPathway } from './Substages'
 
 export const PathwaySelection = () => {
   const { t } = useTranslation()
   const { patient, setPathway, goToNextStage } = useContext(KioskContext)
-  // const [startNewPathway, setStartNewPathway] = useState(false)
+  const [startNewPathway, setStartNewPathway] = useState(false)
   const [selectedPathwayId, setSelectedPathwayId] = useState('')
 
   if (!patient) {
@@ -37,19 +38,11 @@ export const PathwaySelection = () => {
     status: ['active'],
   })
 
-  if (loading) {
-    return <p>Fetching patient pathways</p>
+  if (loading || loadingSelectedPathway) {
+    return <Loading />
   }
 
-  if (loadingSelectedPathway) {
-    return <p>Loading pathway</p>
-  }
-
-  // if (startNewPathway) {
-  //   return <StartNewPathway />
-  // }
-
-  if (patientPathways.length === 0) {
+  if (patientPathways.length === 0 || startNewPathway) {
     return <StartNewPathway />
   }
 
@@ -66,6 +59,16 @@ export const PathwaySelection = () => {
             selectedPathwayId={selectedPathwayId}
             setSelectedPathwayId={setSelectedPathwayId}
           />
+          <div
+            className="mt-8 text-center text-2xl cursor-pointer"
+            onClick={() => setStartNewPathway(true)}
+          >
+            Want to start a new care flow?
+            <br />
+            <span className="font-semibold text-blue-600">
+              Click here to start a new care flow.
+            </span>
+          </div>
         </div>
       </div>
       <div className="">

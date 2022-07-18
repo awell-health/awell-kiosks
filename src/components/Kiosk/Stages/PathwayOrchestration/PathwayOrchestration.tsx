@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { AwellActivity } from '../../../../components/AwellActivity'
-import { Spinner } from '../../../../components/Spinner'
 import { KioskContext } from '../../../../contexts/KioskContext'
 import { usePathwayActivities } from '../../../../hooks/awell-orchestration/usePathwayActivities'
 import { type Activity } from '../../../../types/generated/api.types'
 import { isPathwayCompleted } from '../../../../utils/pathway'
+import { Loading } from '../../../Loading'
 
 export const PathwayOrchestration = () => {
   const { pathway, patient } = useContext(KioskContext)
@@ -82,9 +82,7 @@ export const PathwayOrchestration = () => {
   if (!currentPendingUserActivity)
     return (
       <div>
-        {!currentPendingUserActivity && !isCompleted && (
-          <Spinner message="Loading next user activity" />
-        )}
+        {!currentPendingUserActivity && !isCompleted && <Loading />}
         {isCompleted && (
           <div className="max-w-3xl mx-auto">
             <div className="max-w-xl mx-auto">

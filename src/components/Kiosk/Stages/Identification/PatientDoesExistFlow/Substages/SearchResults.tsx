@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { type User } from '../../../../../../types/generated/api.types'
 import { KioskButton } from '../../../../../Button/variants'
+import { CreatePatient } from '../../PatientDoesntExistFlow/Substages'
 import { PatientConfirm } from './PatientConfirm'
 
 interface SearchResultsProps {
@@ -14,6 +15,7 @@ interface SearchResultsProps {
 export const SearchResults = ({ results }: SearchResultsProps) => {
   const { t } = useTranslation()
   const [selectedPatientId, setSelectedPatientId] = useState('')
+  const [createNewPatient, setCreateNewPatient] = useState(false)
   const [confirmPatientProfileStage, setConfirmPatientProfileStage] =
     useState(false)
 
@@ -27,6 +29,10 @@ export const SearchResults = ({ results }: SearchResultsProps) => {
 
   if (confirmPatientProfileStage) {
     return <PatientConfirm patientId={selectedPatientId} />
+  }
+
+  if (createNewPatient) {
+    return <CreatePatient />
   }
 
   return (
@@ -94,6 +100,15 @@ export const SearchResults = ({ results }: SearchResultsProps) => {
               ))}
             </div>
           </RadioGroup>
+          <div
+            className="mt-8 text-center text-2xl cursor-pointer"
+            onClick={() => setCreateNewPatient(true)}
+          >
+            You don&apos;t find yourself in the list? <br />
+            <span className="font-semibold text-blue-600">
+              Click here to create a new profile.
+            </span>
+          </div>
         </div>
       </div>
       <div className="">

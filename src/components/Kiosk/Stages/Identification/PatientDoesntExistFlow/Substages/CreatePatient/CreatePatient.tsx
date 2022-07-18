@@ -5,6 +5,7 @@ import { CreatePatientProvider } from '../../../../../../../contexts/CreatePatie
 import { KioskContext } from '../../../../../../../contexts/KioskContext'
 import { useCreatePatient } from '../../../../../../../hooks/awell-orchestration/useCreatePatient'
 import { KioskButton } from '../../../../../../Button/variants'
+import { Loading } from '../../../../../../Loading'
 import {
   Email,
   FirstName,
@@ -49,7 +50,7 @@ export const CreatePatient = () => {
   }
 
   if (isLoading) {
-    return <p>Creating patient...</p>
+    return <Loading />
   }
 
   if (isCreatingPatient) {

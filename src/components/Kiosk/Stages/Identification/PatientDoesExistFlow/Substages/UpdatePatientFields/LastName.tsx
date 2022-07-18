@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { KioskContext } from '../../../../../../../contexts/KioskContext'
 import { useUpdatePatient } from '../../../../../../../hooks/awell-orchestration/useUpdatePatient'
 import { KioskButton } from '../../../../../../Button/variants'
+import { Loading } from '../../../../../../Loading'
 
 interface LastNameProps {
   currentValue: string
@@ -46,7 +47,7 @@ export const LastName = ({
   }
 
   if (isLoading) {
-    return <p>Updating patient...</p>
+    return <Loading />
   }
 
   return (

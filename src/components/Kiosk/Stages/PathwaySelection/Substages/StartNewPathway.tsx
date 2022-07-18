@@ -7,6 +7,7 @@ import { GET_PATHWAY } from '../../../../../hooks/awell-orchestration/usePathway
 import { usePublishedPathwayDefinitions } from '../../../../../hooks/awell-orchestration/usePublishedPathwayDefinitions'
 import { useStartPathway } from '../../../../../hooks/awell-orchestration/useStartPathway'
 import { KioskButton } from '../../../../Button/variants'
+import { Loading } from '../../../../Loading'
 import { PublishedPathways } from '../atoms'
 
 export const StartNewPathway = () => {
@@ -39,16 +40,8 @@ export const StartNewPathway = () => {
     }
   }
 
-  if (isStartingPathway) {
-    return <p>Starting pathway...</p>
-  }
-
-  if (loadingSelectedPathway) {
-    return <p>Retrieving the recently started pathway...</p>
-  }
-
-  if (loadingPublishedPathways) {
-    return <p>Loading available pathways...</p>
+  if (isStartingPathway || loadingSelectedPathway || loadingPublishedPathways) {
+    return <Loading />
   }
 
   return (

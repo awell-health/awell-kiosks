@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { SEARCH_BY_NATIONAL_REGISTRY_NUMBER } from '../../../../hooks/awell-orchestration/useSearchByNationalRegistryNumber/graphql/searchByNationalRegistryNumber.graphql'
 import { KioskButton } from '../../../Button/variants'
+import { Loading } from '../../../Loading'
 import { PatientDoesExistFlow } from './PatientDoesExistFlow'
 import { PatientDoesntExistFlow } from './PatientDoesntExistFlow'
 
@@ -17,6 +18,10 @@ export const Identification = () => {
     searchByNationalRegistryNumber({
       variables: { national_registry_number: inputValue },
     })
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   if (called && !loading) {

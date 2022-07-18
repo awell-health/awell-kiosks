@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { KioskContext } from '../../../../../../contexts/KioskContext'
 import { usePatient } from '../../../../../../hooks/awell-orchestration/usePatient'
 import { KioskButton } from '../../../../../Button/variants'
+import { Loading } from '../../../../../Loading'
 import {
   Email,
   FirstName,
@@ -37,7 +38,7 @@ export const PatientConfirm = ({ patientId }: PatientConfirmProps) => {
   }, [loading])
 
   if (loading) {
-    return <p>Fetching patient</p>
+    return <Loading />
   }
 
   if (isUpdatingField) {
