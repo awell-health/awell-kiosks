@@ -8,7 +8,10 @@ export const getDefaultValue = (question: Question): AnswerValue => {
     case UserQuestionType.MultipleSelect:
       return []
     case UserQuestionType.Slider:
-      return question.questionConfig?.slider?.min ?? 0
+      return (
+        JSON.stringify(question.questionConfig?.slider?.min) ??
+        JSON.stringify(0)
+      )
     default:
       return ''
   }

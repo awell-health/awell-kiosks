@@ -1,22 +1,15 @@
-import { useEffect, useState } from 'react'
-import {
-  type FieldValues,
-  Control,
-  Controller,
-  useForm,
-  UseFormRegister,
-} from 'react-hook-form'
+import { useEffect } from 'react'
 
-import { useEvaluateFormRules } from '../../../hooks/awell-orchestration/useEvaluateFormRules'
+import {
+  FormActivityProvider,
+  useFormActivityContext,
+} from '../../../contexts/FormActivityContext'
 import { useForm as useFormQuery } from '../../../hooks/awell-orchestration/useForm'
-import { useSubmitFormResponse } from '../../../hooks/awell-orchestration/useSubmitFormResponse'
 import { QuestionWithVisibility } from '../../../types/form.types'
-import { type Activity, Question } from '../../../types/generated/api.types'
-import { keyValueObjectToQuestionResponseObject } from '../../../utils/dataPoints'
-import { getInitialValues, updateVisibility } from '../../../utils/form'
+import { type Activity } from '../../../types/generated/api.types'
 import { KioskButton } from '../../Button/variants'
+import { Loading } from '../../Loading'
 import { FormSkeleton } from '../../Skeleton'
-import { Spinner } from '../../Spinner'
 import {
   Boolean,
   Date,
@@ -34,164 +27,117 @@ interface FormProps {
   onActivityCompleted: () => void
 }
 
-const renderQuestion = (
-  question: QuestionWithVisibility,
-  register: UseFormRegister<FieldValues>,
-  control: Control<Record<string, unknown>, object>
-) => {
-  switch (question.userQuestionType) {
-    case 'NUMBER':
-      return <Number question={question} register={register} />
-    case 'LONG_TEXT':
-      return <LongText question={question} register={register} />
-    case 'DATE':
-      return <Date question={question} register={register} />
-    case 'MULTIPLE_CHOICE':
-      return <SingleSelect question={question} register={register} />
-    case 'YES_NO':
-      return (
-        <Controller
-          name={question.id}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Boolean
-              question={question}
-              onChange={onChange}
-              value={typeof value === 'boolean' ? value : false}
-            />
-          )}
-          defaultValue={false}
-        />
-      )
-    case 'SHORT_TEXT':
-      return <ShortText question={question} register={register} />
-    case 'SLIDER':
-      return <Slider question={question} register={register} />
-    case 'DESCRIPTION':
-      return <Description question={question} />
-    case 'MULTIPLE_SELECT':
-      return (
-        <Controller
-          name={question.id}
-          control={control}
-          render={({ field: { onChange } }) => (
-            <MultipleSelect question={question} onChange={onChange} />
-          )}
-          defaultValue={false}
-        />
-      )
-    default:
-      return `Question with type ${question.userQuestionType} is not supported.`
-  }
-}
-
-const Form = ({
-  questions,
-  formActivity,
-  onActivityCompleted,
+const Question = ({
+  questionObject,
 }: {
-  questions: Question[]
-  formActivity: Activity
-  onActivityCompleted: () => void
+  questionObject: QuestionWithVisibility
 }) => {
-  const { register, handleSubmit, control, watch, reset, getValues } = useForm({
-    defaultValues: getInitialValues(questions),
-  })
-  const [isSubmittingForm, setIsSubmittingForm] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [evaluateFormRules] = useEvaluateFormRules(formActivity.object.id)
-  const [visibleQuestions, setVisibleQuestions] = useState<
-    Array<QuestionWithVisibility>
-  >([])
-  const { submitFormResponse } = useSubmitFormResponse()
-
-  const updateQuestionsVisibility = async () => {
-    const data = keyValueObjectToQuestionResponseObject(getValues())
-    const evaluationResults = await evaluateFormRules(data)
-    setVisibleQuestions(updateVisibility(questions, evaluationResults))
-  }
-
-  const resetForm = async () => {
-    reset()
-    setIsLoading(true)
-    await updateQuestionsVisibility()
-    setIsLoading(false)
-  }
-
-  useEffect(() => {
-    const subscription = watch(() => updateQuestionsVisibility())
-    return () => subscription.unsubscribe()
-  }, [watch])
-
-  useEffect(() => {
-    resetForm()
-    console.log(visibleQuestions)
-  }, [])
-
-  const onSubmit = () => {
-    handleSubmit(async (data) => {
-      setIsSubmittingForm(true)
-      /**
-       * We only want to submit data for the applicable/visible questions
-       */
-      const responseOfVisibleQuestionsOnly = Object.fromEntries(
-        Object.entries(data).filter(([key]) =>
-          visibleQuestions.find((question) => question.id === key)
-            ? true
-            : false
+  const { currentQuestion, visibleQuestions } = useFormActivityContext()
+  const percentageCompleted = Math.round(
+    (currentQuestion / visibleQuestions.length) * 100
+  )
+  const renderQuestion = () => {
+    switch (questionObject.userQuestionType) {
+      case 'NUMBER':
+        return <Number question={questionObject} />
+      case 'LONG_TEXT':
+        return <LongText question={questionObject} />
+      case 'DATE':
+        return <Date question={questionObject} />
+      case 'MULTIPLE_CHOICE':
+        return <SingleSelect question={questionObject} />
+      case 'YES_NO':
+        return <Boolean question={questionObject} />
+      case 'SHORT_TEXT':
+        return <ShortText question={questionObject} />
+      case 'SLIDER':
+        return <Slider question={questionObject} />
+      case 'DESCRIPTION':
+        return <Description question={questionObject} />
+      case 'MULTIPLE_SELECT':
+        return <MultipleSelect question={questionObject} />
+      default:
+        return (
+          <div>
+            Question with type ${questionObject.userQuestionType} is not
+            supported.
+          </div>
         )
-      )
-
-      const submittedForm = await submitFormResponse({
-        activityId: formActivity.id,
-        response: keyValueObjectToQuestionResponseObject(
-          responseOfVisibleQuestionsOnly
-        ),
-      })
-      if (submittedForm.status === 'DONE') {
-        onActivityCompleted()
-      }
-      setIsSubmittingForm(false)
-    })()
+    }
   }
-
-  if (isLoading) return <Spinner message="Loading display logic" />
 
   return (
-    <div className="grow flex flex-col">
-      <div className="container grow">
-        <form
-          className="max-w-xl mx-auto pb-12 text-left grid grid-cols-1 gap-y-6"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          {visibleQuestions.map((question) => {
-            if (!question.visible) return null
-
-            return (
-              <div key={question.id}>
-                {/* @ts-expect-error fix typing */}
-                {renderQuestion(question, register, control)}
-              </div>
-            )
-          })}
-          <input
-            type="submit"
-            disabled={isSubmittingForm ? true : false}
-            value={isSubmittingForm ? 'Hang on...' : 'Submit'}
-            className="cursor-pointer inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          />
-        </form>
+    <div className="flex flex-grow flex-col">
+      <div className="container mb-8">
+        <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+          <div
+            className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+            style={{
+              width: `${
+                percentageCompleted === 0 ? '25px' : percentageCompleted + '%'
+              }`,
+            }}
+          >
+            {percentageCompleted}%
+          </div>
+        </div>
       </div>
-      <div className="">
-        <KioskButton
-          label="do sth"
-          onClick={() => true}
-          color="blue"
-          disabled={false}
-        />
-      </div>
+      {renderQuestion()}
     </div>
   )
+}
+
+const Form = ({ onActivityCompleted }: { onActivityCompleted: () => void }) => {
+  const {
+    areAllQuestionsCompleted,
+    isFormSubmitted,
+    isSubmittingForm,
+    visibleQuestions,
+    isLoadingQuestions,
+    submitForm,
+    currentQuestion,
+  } = useFormActivityContext()
+
+  /**
+   * If form is submitted,
+   * go to next activity
+   */
+  useEffect(() => {
+    if (isFormSubmitted) {
+      onActivityCompleted()
+    }
+  }, [isFormSubmitted])
+
+  if (isLoadingQuestions || isSubmittingForm) return <Loading />
+
+  if (areAllQuestionsCompleted) {
+    return (
+      <div className="grow flex flex-col">
+        <div className="container grow">
+          <h1 className="text-slate-800 text-5xl">Form completed</h1>
+          <p className="text-slate-600 text-3xl pt-2">
+            Press the button below to submit your responses
+          </p>
+        </div>
+        <div className="">
+          <KioskButton
+            label="Submit form response"
+            onClick={() => submitForm()}
+            color="blue"
+            disabled={false}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  const currentQuestionObject = visibleQuestions[currentQuestion]
+
+  if (currentQuestionObject) {
+    return <Question questionObject={currentQuestionObject} />
+  }
+
+  return <div>Not able to find a current question object.</div>
 }
 
 export const FormContainer = ({
@@ -200,13 +146,16 @@ export const FormContainer = ({
 }: FormProps) => {
   const { form, loading } = useFormQuery(formActivity.object.id)
 
-  if (loading) return <FormSkeleton />
+  if (loading) {
+    return <FormSkeleton />
+  }
 
   return (
-    <Form
-      questions={form.questions}
+    <FormActivityProvider
       formActivity={formActivity}
-      onActivityCompleted={onActivityCompleted}
-    />
+      questions={form.questions}
+    >
+      <Form onActivityCompleted={onActivityCompleted} />
+    </FormActivityProvider>
   )
 }

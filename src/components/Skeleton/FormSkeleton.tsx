@@ -1,7 +1,7 @@
 import ContentLoader from 'react-content-loader'
 
 export const FormSkeleton = () => {
-  const QUESTION_COUNT = 5
+  const QUESTION_COUNT = 1
   const SINGLE_QUESTION_SKELETON_HEIGHT = 55
   const SUBMIT_BUTTON_HEIGHT = 35
   const SUBMIT_BUTTON_OFFSET = 10
@@ -36,17 +36,9 @@ export const FormSkeleton = () => {
   }
 
   return (
-    <div className="w-8/12 mx-auto text-center">
+    <div className="w-8/12 max-w-4xl mx-auto text-center">
       <ContentLoader viewBox={`0 0 400 ${TOTAL_HEIGHT}`}>
         {skeletons}
-        <rect
-          x="0"
-          y={TOTAL_HEIGHT - SUBMIT_BUTTON_HEIGHT}
-          rx="5"
-          ry="5"
-          width="400"
-          height={SUBMIT_BUTTON_HEIGHT}
-        />
       </ContentLoader>
     </div>
   )
